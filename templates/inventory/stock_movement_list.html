@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h3">{% trans "Historique des mouvements" %}</h1>
+      <p class="text-muted mb-0">
+        {% trans "Consultez les entrées, sorties et ajustements de stock." %}
+      </p>
+    </div>
+    {% if perms.inventory.add_stockmovement %}
+      <a href="{% url 'inventory:stock_in' %}" class="btn btn-primary">
+        {% trans "Nouvelle entrée" %}
+      </a>
+    {% endif %}
+  </div>
+
+  <form method="get" class="card card-body mb-4">
+    <div class="row g-3 align-items-end">
+      <div class="col-md-6">
+        <label for="search" class="form-label">{% trans "Recherche" %}</label>
+        <input
+          id="search"
+          type="search"
+          name="q"
+          value="{{ search_query }}"
+          class="form-control"
+          placeholder="{% trans 'Produit, SKU, référence, motif ou utilisateur' %}"
+        >
+      </div>
+
+      <div class="col-md-4">
+        <label for="type" class="form-label">{% trans "Type de mouvement" %}</label>
+        <select id="type" name="type" class="form-select">
+          <option value="">{% trans "Tous les types" %}</option>
+          {% for value, label in movement_types %}
+            <option value="{{ value }}" {% if selected_type == value %}selected{% endif %}>
+              {{ label }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-2 d-flex gap-2">
+        <button type="submit" class="btn btn-primary">{% trans "Filtrer" %}</button>
+        <a href="{% url 'inventory:movement_list' %}" class="btn btn-outline-secondary">
+          {% trans "Effacer" %}
+        </a>
+      </div>
+    </div>
+  </form>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>{% trans "Date" %}</th>
+            <th>{% trans "Produit" %}</th>
+            <th>{% trans "Type" %}</th>
+            <th>{% trans "Quantité" %}</th>
+            <th>{% trans "Avant" %}</th>
+            <th>{% trans "Après" %}</th>
+            <th>{% trans "Utilisateur" %}</th>
+            <th>{% trans "Motif / Référence" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for movement in movements %}
+            <tr>
+              <td class="text-nowrap">{{ movement.created_at|date:"d/m/Y H:i" }}</td>
+              <td>
+                <div class="fw-semibold">{{ movement.product.display_name }}</div>
+                <small class="text-muted">{{ movement.product.sku }}</small>
+              </td>
+              <td>{{ movement.get_movement_type_display }}</td>
+              <td>{{ movement.quantity }}</td>
+              <td>{{ movement.quantity_before }}</td>
+              <td>{{ movement.quantity_after }}</td>
+              <td>{{ movement.created_by.get_username }}</td>
+              <td>
+                {% if movement.reason %}{{ movement.reason }}{% endif %}
+                {% if movement.reference %}
+                  <div class="small text-muted">
+                    {% trans "Réf." %}: {{ movement.reference }}
+                  </div>
+                {% endif %}
+                {% if not movement.reason and not movement.reference %}—{% endif %}
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="8" class="text-center text-muted py-4">
+                {% trans "Aucun mouvement trouvé." %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% if is_paginated %}
+    <nav class="mt-4" aria-label="{% trans 'Pagination' %}">
+      <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link"
+               href="?q={{ search_query|urlencode }}&type={{ selected_type|urlencode }}&page={{ page_obj.previous_page_number }}">
+              {% trans "Précédent" %}
+            </a>
+          </li>
+        {% endif %}
+
+        <li class="page-item active">
+          <span class="page-link">
+            {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+          </span>
+        </li>
+
+        {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link"
+               href="?q={{ search_query|urlencode }}&type={{ selected_type|urlencode }}&page={{ page_obj.next_page_number }}">
+              {% trans "Suivant" %}
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+  {% endif %}
+</div>
+{% endblock %}

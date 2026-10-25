@@ -1,10 +1,38 @@
+
 {% load i18n %}
-{# Seules les pages qui existent sont listées (pas de liens morts). Produits, Stock et Alertes : lots 2b/2c. #}
+
 <ul class="nav nav-pills flex-column p-3 gap-1">
   {% if perms.catalog.view_product %}
   <li class="nav-item">
     <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
-       href="{% url 'web:dashboard' %}">{% trans "Tableau de bord" %}</a>
+       href="{% url 'web:dashboard' %}">
+      {% trans "Tableau de bord" %}
+    </a>
+  </li>
+  {% endif %}
+
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.namespace == 'catalog' %}active{% endif %}"
+       href="{% url 'catalog:product_list' %}">
+      {% trans "Produits" %}
+    </a>
+  </li>
+
+  {% if perms.inventory.add_stockmovement %}
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name == 'stock_in' %}active{% endif %}"
+       href="{% url 'inventory:stock_in' %}">
+      {% trans "Entrée de stock" %}
+    </a>
+  </li>
+  {% endif %}
+
+  {% if perms.inventory.view_stockmovement %}
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name == 'movement_list' %}active{% endif %}"
+       href="{% url 'inventory:movement_list' %}">
+      {% trans "Historique des mouvements" %}
+    </a>
   </li>
   {% endif %}
 </ul>

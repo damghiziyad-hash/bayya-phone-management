@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Produits" %}{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+  <h1 class="h3 mb-0">{% trans "Produits" %}</h1>
+  {% if can_add_product %}
+    <a href="{% url 'catalog:product_create' %}" class="btn btn-primary">
+      {% trans "Ajouter un produit" %}
+    </a>
+  {% endif %}
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <form method="get" class="row g-3 align-items-end">
+      <div class="col-12 col-lg-5">
+        <label for="search" class="form-label">{% trans "Recherche" %}</label>
+        <input id="search" name="q" value="{{ search_query }}"
+               class="form-control"
+               placeholder="{% trans 'Nom, référence, code-barres, marque...' %}">
+      </div>
+      <div class="col-12 col-md-5 col-lg-3">
+        <label for="category" class="form-label">{% trans "Catégorie" %}</label>
+        <select id="category" name="category" class="form-select">
+          <option value="">{% trans "Toutes les catégories" %}</option>
+          {% for category in categories %}
+            <option value="{{ category.pk }}"
+              {% if selected_category == category.pk|stringformat:"s" %}selected{% endif %}>
+              {{ category.display_name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-12 col-md-5 col-lg-2">
+        <label for="status" class="form-label">{% trans "Statut" %}</label>
+        <select id="status" name="status" class="form-select">
+          <option value="">{% trans "Tous" %}</option>
+          <option value="active" {% if selected_status == "active" %}selected{% endif %}>{% trans "Actif" %}</option>
+          <option value="archived" {% if selected_status == "archived" %}selected{% endif %}>{% trans "Archivé" %}</option>
+        </select>
+      </div>
+      <div class="col-12 col-lg-2 d-flex gap-2">
+        <button class="btn btn-primary flex-grow-1" type="submit">{% trans "Filtrer" %}</button>
+        <a class="btn btn-outline-secondary" href="{% url 'catalog:product_list' %}">{% trans "Effacer" %}</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  {% if products %}
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th>{% trans "Référence" %}</th>
+            <th>{% trans "Produit" %}</th>
+            <th>{% trans "Catégorie" %}</th>
+            <th>{% trans "Compatibilité" %}</th>
+            <th class="text-end">{% trans "Prix de vente" %}</th>
+            {% if can_view_purchase_price %}<th class="text-end">{% trans "Prix d'achat" %}</th>{% endif %}
+            <th class="text-end">{% trans "Quantité" %}</th>
+            <th>{% trans "Statut du stock" %}</th>
+            <th>{% trans "État" %}</th>
+            {% if can_change_product %}<th>{% trans "Actions" %}</th>{% endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for product in products %}
+            <tr>
+              <td><span class="ltr-text">{{ product.sku }}</span></td>
+              <td>
+                <bdi>{{ product.display_name }}</bdi>
+                {% if product.barcode %}
+                  <div class="small text-body-secondary ltr-text">{{ product.barcode }}</div>
+                {% endif %}
+              </td>
+              <td>{{ product.category.display_name }}</td>
+              <td>
+                {% if product.phone_brand %}<bdi>{{ product.phone_brand }}</bdi>{% endif %}
+                {% if product.phone_model %}<div class="small text-body-secondary"><bdi>{{ product.phone_model }}</bdi></div>{% endif %}
+                {% if not product.phone_brand and not product.phone_model %}—{% endif %}
+              </td>
+              <td class="text-end"><span class="ltr-text">{{ product.sale_price|floatformat:2 }}</span></td>
+              {% if can_view_purchase_price %}
+                <td class="text-end"><span class="ltr-text">{{ product.purchase_price|floatformat:2 }}</span></td>
+              {% endif %}
+              <td class="text-end">{{ product.quantity }}</td>
+              <td>
+                {% if product.stock_status == "out" %}
+                  <span class="badge text-bg-danger">{% trans "Rupture" %}</span>
+                {% elif product.stock_status == "low" %}
+                  <span class="badge text-bg-warning">{% trans "Stock faible" %}</span>
+                {% elif product.stock_status == "archived" %}
+                  <span class="badge text-bg-secondary">{% trans "Archivé" %}</span>
+                {% else %}
+                  <span class="badge text-bg-success">{% trans "Normal" %}</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if product.status == "active" %}
+                  <span class="badge text-bg-success">{% trans "Actif" %}</span>
+                {% else %}
+                  <span class="badge text-bg-secondary">{% trans "Archivé" %}</span>
+                {% endif %}
+              </td>
+              {% if can_change_product %}
+                <td>
+                  <a class="btn btn-sm btn-outline-primary"
+                     href="{% url 'catalog:product_update' product.pk %}">
+                    {% trans "Modifier" %}
+                  </a>
+                </td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if is_paginated %}
+      <nav class="card-body" aria-label="{% trans 'Pagination' %}">
+        <ul class="pagination mb-0 flex-wrap">
+          {% if page_obj.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?q={{ search_query|urlencode }}&category={{ selected_category|urlencode }}&status={{ selected_status|urlencode }}&page={{ page_obj.previous_page_number }}">{% trans "Précédent" %}</a>
+            </li>
+          {% endif %}
+          <li class="page-item disabled">
+            <span class="page-link">{% trans "Page" %} {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+          </li>
+          {% if page_obj.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?q={{ search_query|urlencode }}&category={{ selected_category|urlencode }}&status={{ selected_status|urlencode }}&page={{ page_obj.next_page_number }}">{% trans "Suivant" %}</a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+    {% endif %}
+  {% else %}
+    <div class="card-body text-center py-5">
+      <p class="text-body-secondary mb-3">{% trans "Aucun produit trouvé." %}</p>
+      {% if can_add_product %}
+        <a href="{% url 'catalog:product_create' %}" class="btn btn-primary">{% trans "Ajouter un produit" %}</a>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
