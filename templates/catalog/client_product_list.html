@@ -1,0 +1,191 @@
+
+{% load static i18n %}
+
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bayya Phone | Boutique</title>
+    <link rel="stylesheet" href="{% static 'vendor/bootstrap/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+
+    <style>
+        body { background: #f7f8fa; color: #202124; }
+        .store-nav { background: #fff; border-bottom: 1px solid #eee; }
+        .brand { font-size: 1.5rem; font-weight: 800; color: #172554; }
+        .hero {
+            background: linear-gradient(120deg, #101d40, #2454a4);
+            color: white; border-radius: 22px; padding: 55px 35px;
+        }
+        .hero h1 { font-weight: 800; }
+        .product-card {
+            background: white; border: 1px solid #eee; border-radius: 16px;
+            height: 100%; overflow: hidden; transition: .2s;
+        }
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px #17255412;
+        }
+        .product-image {
+            height: 220px; width: 100%; object-fit: contain;
+            background: #fff; padding: 18px;
+        }
+        .product-placeholder {
+            height: 220px; display: grid; place-items: center;
+            background: #eef2f7; color: #64748b; font-size: 3rem;
+        }
+        .product-price { color: #1d4ed8; font-weight: 800; font-size: 1.2rem; }
+        .btn-store { background: #1d4ed8; color: white; border-radius: 9px; }
+        .btn-store:hover { background: #173ea8; color: white; }
+    </style>
+</head>
+<body>
+
+<nav class="store-nav py-3">
+    <div class="container d-flex align-items-center justify-content-between gap-3">
+        <a class="brand text-decoration-none" href="/">Bayya Phone</a>
+
+        <div class="d-flex align-items-center gap-3">
+            <a href="{% url 'catalog:client_catalog' %}" class="text-decoration-none text-dark">
+                Boutique
+            </a>
+            <a href="{% url 'web:login' %}" class="btn btn-outline-dark btn-sm">
+                <span aria-hidden="true">♙</span> Connexion
+            </a>
+        </div>
+    </div>
+</nav>
+
+<main class="container py-4 py-lg-5">
+    <section class="hero mb-5">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <p class="text-uppercase small fw-bold mb-2">Bienvenue chez Bayya Phone</p>
+                <h1 class="display-5 mb-3">Le smartphone qu'il vous faut.</h1>
+                <p class="lead mb-4">
+                    Découvrez notre sélection de téléphones et trouvez votre prochain smartphone.
+                </p>
+                <a href="#produits" class="btn btn-light btn-lg">Découvrir nos produits</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="produits">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+            <div>
+                <h2 class="h3 fw-bold mb-1">Nos produits</h2>
+                <p class="text-secondary mb-0">Découvrez les modèles disponibles.</p>
+            </div>
+
+            <form method="get" class="d-flex gap-2" role="search">
+                <input
+                    type="search"
+                    name="q"
+                    value="{{ request.GET.q }}"
+                    class="form-control"
+                    placeholder="Rechercher un téléphone..."
+                    aria-label="Rechercher un téléphone"
+                >
+                <button class="btn btn-store px-3" type="submit">Rechercher</button>
+            </form>
+        </div>
+
+        <div class="row g-4">
+            {% for product in products %}
+                <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                    <article class="product-card">
+                        <a href="{% url 'catalog:client_product_detail' product.pk %}"
+                           class="text-decoration-none">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}"
+                                     class="product-image"
+                                     alt="{{ product.display_name }}">
+                            {% else %}
+                                <div class="product-placeholder" aria-label="Aucune photo">▧</div>
+                            {% endif %}
+                        </a>
+
+                        <div class="p-3">
+                            {% if product.phone_brand %}
+                                <p class="small text-secondary mb-1">{{ product.phone_brand }}</p>
+                            {% endif %}
+
+                            <h3 class="h6 fw-bold mb-2">
+                                <a href="{% url 'catalog:client_product_detail' product.pk %}"
+                                   class="text-decoration-none text-dark">
+                                    {{ product.display_name }}
+                                </a>
+                            </h3>
+
+                            {% if product.phone_model %}
+                                <p class="small text-secondary mb-2">{{ product.phone_model }}</p>
+                            {% endif %}
+
+                            <p class="product-price mb-3">
+                                {{ product.sale_price|floatformat:2 }} MAD
+                            </p>
+
+                            {% if product.quantity > 0 %}
+                                <p class="small text-success">Disponible</p>
+                            {% else %}
+                                <p class="small text-danger">Indisponible</p>
+                            {% endif %}
+
+                            <a href="{% url 'catalog:client_product_detail' product.pk %}"
+                               class="btn btn-store w-100">
+                                Voir le produit
+                            </a>
+                        </div>
+                    </article>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="bg-white rounded-4 p-5 text-center">
+                        <h3 class="h5">Aucun produit disponible pour le moment</h3>
+                        <p class="text-secondary mb-0">
+                            Revenez bientôt pour découvrir nos produits.
+                        </p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if is_paginated %}
+            <nav class="mt-5" aria-label="Pagination des produits">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q|urlencode }}">
+                                Précédent
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    <li class="page-item active">
+                        <span class="page-link">{{ page_obj.number }}</span>
+                    </li>
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q|urlencode }}">
+                                Suivant
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    </section>
+</main>
+
+<footer class="bg-white border-top py-4 mt-5">
+    <div class="container text-center text-secondary small">
+        © {% now "Y" %} Bayya Phone — Tous droits réservés.
+    </div>
+</footer>
+
+</body>
+</html>

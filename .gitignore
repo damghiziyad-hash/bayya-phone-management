@@ -19,3 +19,4 @@ media/
 
 # Traductions compilées (régénérées par compilemessages)
 *.mo
+config/settings.py.before_render

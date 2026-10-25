@@ -42,6 +42,12 @@ class Product(TimeStampedModel):
     barcode = models.CharField(_("code-barres"), max_length=64, blank=True)
     name_fr = models.CharField(_("nom (français)"), max_length=200)
     name_ar = models.CharField(_("nom (arabe)"), max_length=200, blank=True)
+    image = models.ImageField(
+        _("photo du produit"),
+        upload_to="products/",
+        blank=True,
+        null=True,
+    )
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="products", verbose_name=_("catégorie"))
     phone_brand = models.CharField(_("marque compatible"), max_length=100, blank=True)
     phone_model = models.CharField(_("modèle compatible"), max_length=100, blank=True)

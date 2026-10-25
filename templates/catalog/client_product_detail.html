@@ -1,0 +1,104 @@
+
+{% load static %}
+
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ product.display_name }} | Bayya Phone</title>
+    <link rel="stylesheet" href="{% static 'vendor/bootstrap/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+    <style>
+        body { background: #f7f8fa; color: #202124; }
+        .store-nav { background: white; border-bottom: 1px solid #eee; }
+        .brand { font-size: 1.4rem; font-weight: 800; color: #172554; }
+        .product-panel { background: white; border-radius: 20px; }
+        .product-image { width: 100%; height: 400px; object-fit: contain; }
+        .price { color: #1d4ed8; font-size: 1.8rem; font-weight: 800; }
+        .btn-store { background: #1d4ed8; color: white; border-radius: 9px; }
+        .btn-store:hover { background: #173ea8; color: white; }
+    </style>
+</head>
+<body>
+<nav class="store-nav py-3">
+    <div class="container d-flex justify-content-between align-items-center">
+        <a class="brand text-decoration-none" href="/">Bayya Phone</a>
+        <a class="btn btn-outline-dark btn-sm"
+           href="{% url 'catalog:client_catalog' %}">Retour à la boutique</a>
+    </div>
+</nav>
+
+<main class="container py-5">
+    <div class="product-panel p-3 p-lg-5">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-6">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}"
+                         class="product-image"
+                         alt="{{ product.display_name }}">
+                {% else %}
+                    <div class="product-image d-flex align-items-center justify-content-center bg-light rounded-4">
+                        <span class="text-secondary">Photo non disponible</span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-lg-6">
+                {% if product.phone_brand %}
+                    <p class="text-secondary mb-2">{{ product.phone_brand }}</p>
+                {% endif %}
+
+                <h1 class="display-6 fw-bold">{{ product.display_name }}</h1>
+
+                {% if product.phone_model %}
+                    <p class="text-secondary">{{ product.phone_model }}</p>
+                {% endif %}
+
+                <p class="price my-4">{{ product.sale_price|floatformat:2 }} MAD</p>
+
+                {% if product.category %}
+                    <p><strong>Catégorie :</strong> {{ product.category.display_name }}</p>
+                {% endif %}
+
+                {% if product.quantity > 0 %}
+                    <p class="text-success">✓ Produit disponible</p>
+
+                    <form method="get" action="{% url 'orders:checkout' %}">
+                        <input type="hidden" name="product_id" value="{{ product.pk }}">
+
+                        <label for="quantity" class="form-label fw-semibold">
+                            Quantité souhaitée
+                        </label>
+
+                        <input
+                            id="quantity"
+                            type="number"
+                            name="quantity"
+                            class="form-control mb-3"
+                            min="1"
+                            max="{{ product.quantity }}"
+                            value="1"
+                            required
+                        >
+
+                        <button type="submit" class="btn btn-store btn-lg w-100">
+                            Commander
+                        </button>
+                    </form>
+
+                    <p class="small text-secondary mt-3">
+                        Votre commande sera confirmée par téléphone.
+                    </p>
+                {% else %}
+                    <p class="text-danger fw-semibold">Produit momentanément indisponible</p>
+                    <button class="btn btn-secondary btn-lg w-100" disabled>
+                        Indisponible
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

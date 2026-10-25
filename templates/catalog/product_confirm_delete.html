@@ -1,0 +1,37 @@
+
+{% extends "base.html" %}
+
+{% block title %}Supprimer un produit{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card border-danger mx-auto" style="max-width: 600px;">
+        <div class="card-header bg-danger text-white">
+            <h1 class="h5 mb-0">Confirmer la suppression</h1>
+        </div>
+
+        <div class="card-body">
+            <p>
+                Voulez-vous vraiment supprimer le produit
+                <strong>{{ object.display_name }}</strong> ?
+            </p>
+
+            <p class="text-danger">
+                Cette action est définitive. Les produits ayant un historique
+                de stock ou des commandes ne peuvent pas être supprimés.
+            </p>
+
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">
+                    Oui, supprimer
+                </button>
+                <a href="{% url 'catalog:product_list' %}"
+                   class="btn btn-secondary">
+                    Annuler
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -13,7 +13,7 @@ def switch(client, language, **extra):
 def test_default_language_is_french_ltr(client):
     html = client.get(reverse("web:login")).content.decode()
     assert 'lang="fr"' in html and 'dir="ltr"' in html
-    assert "bootstrap.min.css" in html and "bootstrap.rtl.min.css" not in html
+    assert "bootstrap.min." in html and "bootstrap.rtl.min." not in html
 
 
 def test_anonymous_can_switch_to_arabic_rtl(client):
@@ -22,7 +22,7 @@ def test_anonymous_can_switch_to_arabic_rtl(client):
     assert resp.cookies[settings.LANGUAGE_COOKIE_NAME].value == "ar"
     html = client.get(reverse("web:login")).content.decode()
     assert 'lang="ar"' in html and 'dir="rtl"' in html
-    assert "bootstrap.rtl.min.css" in html
+    assert "bootstrap.rtl.min." in html
 
 
 def test_dashboard_is_rtl_in_arabic(client, owner):

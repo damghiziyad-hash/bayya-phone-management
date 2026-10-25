@@ -1,0 +1,97 @@
+
+{% extends "base_root.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Passer commande" %}{% endblock %}
+
+{% block body %}
+<div class="container py-5" style="max-width: 900px;">
+    <div class="mb-4">
+        <a href="{% url 'catalog:client_product_detail' product.pk %}"
+           class="text-decoration-none">
+            &larr; {% trans "Retour au produit" %}
+        </a>
+    </div>
+
+    <h1 class="h3 mb-4">{% trans "Finaliser votre commande" %}</h1>
+
+    <div class="row g-4">
+        <div class="col-md-5">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">{% trans "Votre produit" %}</h2>
+
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}"
+                             alt="{{ product.display_name }}"
+                             class="img-fluid rounded mb-3"
+                             style="max-height: 220px; width: 100%; object-fit: contain;">
+                    {% endif %}
+
+                    <h3 class="h6">{{ product.display_name }}</h3>
+
+                    {% if product.phone_brand %}
+                        <p class="text-muted mb-1">{{ product.phone_brand }}</p>
+                    {% endif %}
+
+                    <p class="fs-5 fw-bold mb-2">
+                        {{ product.sale_price|floatformat:2 }} MAD
+                    </p>
+
+                    <p class="small text-muted mb-0">
+                        {% blocktrans with stock=product.quantity %}
+                            Stock disponible : {{ stock }}
+                        {% endblocktrans %}
+                    </p>
+                </div>
+            </div>
+
+            <div class="alert alert-info mt-3 small">
+                {% trans "Votre commande sera en attente jusqu'à ce que notre équipe vous contacte pour confirmation." %}
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-4">{% trans "Vos informations" %}</h2>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="product_id" value="{{ product.pk }}">
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        {% for field in form %}
+                            <div class="mb-3">
+                                <label for="{{ field.id_for_label }}"
+                                       class="form-label">
+                                    {{ field.label }}
+                                </label>
+
+                                {{ field }}
+
+                                {% if field.help_text %}
+                                    <div class="form-text">{{ field.help_text }}</div>
+                                {% endif %}
+
+                                {% for error in field.errors %}
+                                    <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+
+                        <button type="submit" class="btn btn-primary w-100 py-2">
+                            {% trans "Confirmer la demande de commande" %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

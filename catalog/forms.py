@@ -12,6 +12,7 @@ class ProductForm(forms.ModelForm):
             "barcode",
             "name_fr",
             "name_ar",
+            "image",
             "category",
             "phone_brand",
             "phone_model",
@@ -34,6 +35,7 @@ class ProductForm(forms.ModelForm):
             "low_stock_threshold": forms.NumberInput(attrs={"class": "form-control", "min": "0"}),
             "location": forms.TextInput(attrs={"class": "form-control"}),
             "status": forms.Select(attrs={"class": "form-select"}),
+            "image": forms.ClearableFileInput(attrs={"class": "form-control", "accept": "image/*"}),
         }
         labels = {
             "sku": _("Référence (SKU)"),
@@ -48,6 +50,7 @@ class ProductForm(forms.ModelForm):
             "low_stock_threshold": _("Seuil d'alerte"),
             "location": _("Emplacement"),
             "status": _("Statut"),
+            "image": _("Photo du produit"),
         }
 
     def __init__(self, *args, user=None, **kwargs):

@@ -65,7 +65,9 @@
             <th class="text-end">{% trans "Quantité" %}</th>
             <th>{% trans "Statut du stock" %}</th>
             <th>{% trans "État" %}</th>
-            {% if can_change_product %}<th>{% trans "Actions" %}</th>{% endif %}
+            {% if can_change_product or can_delete_product %}
+            <th>{% trans "Actions" %}</th>
+            {% endif %}
           </tr>
         </thead>
         <tbody>
@@ -107,14 +109,35 @@
                   <span class="badge text-bg-secondary">{% trans "Archivé" %}</span>
                 {% endif %}
               </td>
-              {% if can_change_product %}
-                <td>
-                  <a class="btn btn-sm btn-outline-primary"
-                     href="{% url 'catalog:product_update' product.pk %}">
-                    {% trans "Modifier" %}
-                  </a>
-                </td>
-              {% endif %}
+             
+         {% if can_change_product or can_delete_product %}
+           <td>
+             {% if can_change_product %}
+                <a class="btn btn-sm btn-outline-primary"
+                  href="{% url 'catalog:product_update' product.pk %}">
+                  {% trans "Modifier" %}
+                </a>
+             {% endif %}
+
+             {% if can_delete_product %}
+              <a class="btn btn-sm btn-outline-danger"
+                 href="{% url 'catalog:product_delete' product.pk %}">
+                 {% trans "Supprimer" %}
+               </a>
+             {% endif %}
+       {% if can_change_product and product.status == "active" %}
+          <form method="post"
+                action="{% url 'catalog:product_archive' product.pk %}"
+                onsubmit="return confirm('Archiver ce produit ?');">
+          {% csrf_token %}
+    	  <button type="submit" class="btn btn-sm btn-outline-secondary">
+           {% trans "Archiver" %}
+    </button>
+  </form>
+    {% endif %}
+           </td> 
+          {% endif %}
+ 
             </tr>
           {% endfor %}
         </tbody>

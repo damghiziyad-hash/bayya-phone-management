@@ -4,6 +4,7 @@ from pathlib import Path
 
 from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
@@ -36,11 +37,13 @@ INSTALLED_APPS = [
     "accounts",
     "catalog",
     "inventory",
+    "orders",
     "web",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -70,8 +73,20 @@ TEMPLATES = [
 ]
 
 if os.environ.get("DB_ENGINE", "postgresql") == "sqlite":
-    # Essais rapides seulement : pas de verrouillage de lignes réel.
-    DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / "db.sqlite3"}}
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
+elif os.environ.get("DATABASE_URL"):
+    DATABASES = {
+        "default": dj_database_url.parse(
+            os.environ["DATABASE_URL"],
+            conn_max_age=600,
+            ssl_require=not DEBUG,
+        )
+    }
 else:
     DATABASES = {
         "default": {
@@ -104,8 +119,19 @@ TIME_ZONE = os.environ.get("DJANGO_TIME_ZONE", "Africa/Casablanca")  # hypothès
 USE_I18N = True
 USE_TZ = True
 
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STORE_CURRENCY = os.environ.get("STORE_CURRENCY", "MAD")  # hypothèse : MAD, à confirmer
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
