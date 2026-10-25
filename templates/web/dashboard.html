@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Tableau de bord" %}{% endblock %}
+{% block content %}
+<h1 class="h3 mb-4">{% trans "Tableau de bord" %}</h1>
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-xl-3">
+    <div class="card h-100"><div class="card-body">
+      <div class="text-body-secondary small">{% trans "Références actives" %}</div>
+      <div class="fs-2 fw-semibold" id="stat-active">{{ stats.active_count }}</div>
+    </div></div>
+  </div>
+  <div class="col-6 col-xl-3">
+    <div class="card h-100"><div class="card-body">
+      <div class="text-body-secondary small">{% trans "Quantité totale en stock" %}</div>
+      <div class="fs-2 fw-semibold" id="stat-quantity">{{ stats.total_quantity }}</div>
+    </div></div>
+  </div>
+  <div class="col-6 col-xl-3">
+    <div class="card h-100 border-warning"><div class="card-body">
+      <div class="text-body-secondary small">{% trans "Stock faible" %}</div>
+      <div class="fs-2 fw-semibold text-warning-emphasis" id="stat-low">{{ stats.low_count }}</div>
+    </div></div>
+  </div>
+  <div class="col-6 col-xl-3">
+    <div class="card h-100 border-danger"><div class="card-body">
+      <div class="text-body-secondary small">{% trans "Rupture de stock" %}</div>
+      <div class="fs-2 fw-semibold text-danger" id="stat-out">{{ stats.out_count }}</div>
+    </div></div>
+  </div>
+  {% if stats.stock_value is not None %}
+  <div class="col-12 col-xl-6">
+    <div class="card h-100"><div class="card-body">
+      <div class="text-body-secondary small">{% trans "Valeur du stock (prix d'achat)" %}</div>
+      <div class="fs-2 fw-semibold" id="stat-value"><span class="ltr-text">{{ stats.stock_value|floatformat:2 }} {{ currency }}</span></div>
+    </div></div>
+  </div>
+  {% endif %}
+</div>
+
+<div class="card mb-4">
+  <div class="card-header fw-semibold">{% trans "Produits à surveiller" %}</div>
+  {% if stats.watch_list %}
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead><tr>
+        <th scope="col">{% trans "Produit" %}</th>
+        <th scope="col" class="text-end">{% trans "Quantité" %}</th>
+        <th scope="col" class="text-end">{% trans "Seuil" %}</th>
+        <th scope="col">{% trans "Emplacement" %}</th>
+        <th scope="col">{% trans "Statut" %}</th>
+      </tr></thead>
+      <tbody>
+      {% for p in stats.watch_list %}
+        <tr>
+          <td><bdi>{{ p.display_name }}</bdi><div class="small text-body-secondary"><span class="ltr-text">{{ p.sku }}</span></div></td>
+          <td class="text-end">{{ p.quantity }}</td>
+          <td class="text-end">{{ p.low_stock_threshold }}</td>
+          <td>{{ p.location|default:"—" }}</td>
+          <td>{% if p.stock_status == "out" %}<span class="badge text-bg-danger">{% trans "Rupture" %}</span>{% else %}<span class="badge text-bg-warning">{% trans "Stock faible" %}</span>{% endif %}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="card-body text-body-secondary">{% trans "Aucun produit à surveiller : tous les stocks sont au-dessus de leur seuil." %}</div>
+  {% endif %}
+</div>
+
+{% if stats.recent_movements is not None %}
+<div class="card mb-4">
+  <div class="card-header fw-semibold">{% trans "Derniers mouvements de stock" %}</div>
+  {% if stats.recent_movements %}
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead><tr>
+        <th scope="col">{% trans "Date" %}</th>
+        <th scope="col">{% trans "Produit" %}</th>
+        <th scope="col">{% trans "Type" %}</th>
+        <th scope="col" class="text-end">{% trans "Quantité" %}</th>
+        <th scope="col">{% trans "Utilisateur" %}</th>
+      </tr></thead>
+      <tbody>
+      {% for m in stats.recent_movements %}
+        <tr>
+          <td>{{ m.created_at|date:"SHORT_DATETIME_FORMAT" }}</td>
+          <td><bdi>{{ m.product.display_name }}</bdi> <span class="small text-body-secondary ltr-text">{{ m.product.sku }}</span></td>
+          <td>{{ m.get_movement_type_display }}</td>
+          <td class="text-end"><span class="ltr-text">{% if m.quantity_after >= m.quantity_before %}+{% else %}−{% endif %}{{ m.quantity }}</span></td>
+          <td><bdi>{{ m.created_by.get_username }}</bdi></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="card-body text-body-secondary">{% trans "Aucun mouvement de stock enregistré." %}</div>
+  {% endif %}
+</div>
+{% endif %}
+
+<div class="card">
+  <div class="card-header fw-semibold">{% trans "Définitions" %}</div>
+  <ul class="list-group list-group-flush small">
+    <li class="list-group-item">{% trans "Références actives : produits non archivés." %}</li>
+    <li class="list-group-item">{% trans "Quantité totale : somme des quantités des produits actifs." %}</li>
+    <li class="list-group-item">{% trans "Stock faible : quantité comprise entre 1 et le seuil d'alerte du produit." %}</li>
+    <li class="list-group-item">{% trans "Rupture : quantité égale à 0." %}</li>
+    {% if stats.stock_value is not None %}<li class="list-group-item">{% trans "Valeur du stock : quantité × prix d'achat, produits actifs seulement." %}</li>{% endif %}
+  </ul>
+</div>
+{% endblock %}

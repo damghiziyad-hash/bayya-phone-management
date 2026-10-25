@@ -16,3 +16,6 @@ media/
 # Éditeurs
 .vscode/
 .idea/
+
+# Traductions compilées (régénérées par compilemessages)
+*.mo

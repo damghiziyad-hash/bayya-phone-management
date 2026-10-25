@@ -1,0 +1,10 @@
+{% load i18n %}
+{# Seules les pages qui existent sont listées (pas de liens morts). Produits, Stock et Alertes : lots 2b/2c. #}
+<ul class="nav nav-pills flex-column p-3 gap-1">
+  {% if perms.catalog.view_product %}
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+       href="{% url 'web:dashboard' %}">{% trans "Tableau de bord" %}</a>
+  </li>
+  {% endif %}
+</ul>

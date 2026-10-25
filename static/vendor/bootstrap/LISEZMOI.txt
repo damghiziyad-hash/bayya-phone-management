@@ -1,0 +1,3 @@
+Bootstrap 5.3.3 (copie locale, pour fonctionner sans internet). Fichiers attendus dans ce dossier :
+  bootstrap.min.css       bootstrap.rtl.min.css       bootstrap.bundle.min.js
+Commandes de téléchargement : voir docs/LOT2A.md. Licence : MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE).

@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "accounts",
     "catalog",
     "inventory",
+    "web",
 ]
 
 MIDDLEWARE = [
@@ -85,7 +86,9 @@ else:
     }
 
 AUTH_USER_MODEL = "accounts.User"
-LOGIN_URL = "admin:login"
+LOGIN_URL = "web:login"
+LOGIN_REDIRECT_URL = "web:dashboard"
+LOGOUT_REDIRECT_URL = "web:login"
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -103,6 +106,8 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STORE_CURRENCY = os.environ.get("STORE_CURRENCY", "MAD")  # hypothèse : MAD, à confirmer
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 if not DEBUG:

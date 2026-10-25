@@ -1,0 +1,42 @@
+{% extends "base_root.html" %}
+{% load i18n %}
+{% block body_class %}bg-body-tertiary{% endblock %}
+{% block body %}
+<header class="navbar sticky-top bg-dark shadow-sm" data-bs-theme="dark">
+  <div class="container-fluid gap-2">
+    <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="offcanvas"
+            data-bs-target="#sidebar" aria-controls="sidebar" aria-label="{% trans 'Ouvrir le menu' %}">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand me-auto" href="{% url 'web:dashboard' %}">Bayya Phone</a>
+    {% include "partials/language_switcher.html" with btn_on="btn-light" btn_off="btn-outline-light" %}
+    <span class="text-light small d-none d-md-inline">
+      <bdi>{{ request.user.get_full_name|default:request.user.get_username }}</bdi>
+      <span class="text-secondary">· {{ request.user.get_role_display }}</span>
+    </span>
+    <form action="{% url 'web:logout' %}" method="post" class="d-inline">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-sm btn-outline-light">{% trans "Se déconnecter" %}</button>
+    </form>
+  </div>
+</header>
+
+<div class="d-flex">
+  <nav id="sidebar" class="offcanvas-lg offcanvas-start app-sidebar bg-body border-end" tabindex="-1"
+       aria-label="{% trans 'Navigation principale' %}">
+    <div class="offcanvas-header d-lg-none">
+      <h2 class="offcanvas-title h5">{% trans "Menu" %}</h2>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebar"
+              aria-label="{% trans 'Fermer' %}"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+      {% include "partials/sidebar_menu.html" %}
+    </div>
+  </nav>
+
+  <main class="flex-grow-1 p-3 p-lg-4 app-main">
+    {% include "partials/messages.html" %}
+    {% block content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}

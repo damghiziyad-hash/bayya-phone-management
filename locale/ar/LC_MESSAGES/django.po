@@ -1,0 +1,146 @@
+# Traductions arabes de Bayya Phone (à faire relire par un arabophone avant usage réel).
+msgid ""
+msgstr ""
+"Project-Id-Version: Bayya Phone\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ar\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+
+msgid "Tableau de bord"
+msgstr "لوحة التحكم"
+
+msgid "Connexion"
+msgstr "تسجيل الدخول"
+
+msgid "Connectez-vous pour accéder à la gestion du magasin."
+msgstr "سجّل الدخول للوصول إلى إدارة المتجر."
+
+msgid "Nom d'utilisateur"
+msgstr "اسم المستخدم"
+
+msgid "Mot de passe"
+msgstr "كلمة المرور"
+
+msgid "Se connecter"
+msgstr "دخول"
+
+msgid "Se déconnecter"
+msgstr "تسجيل الخروج"
+
+msgid "Ouvrir le menu"
+msgstr "فتح القائمة"
+
+msgid "Fermer"
+msgstr "إغلاق"
+
+msgid "Menu"
+msgstr "القائمة"
+
+msgid "Navigation principale"
+msgstr "التنقل الرئيسي"
+
+msgid "Langue"
+msgstr "اللغة"
+
+msgid "Références actives"
+msgstr "المراجع النشطة"
+
+msgid "Quantité totale en stock"
+msgstr "إجمالي الكمية في المخزون"
+
+msgid "Stock faible"
+msgstr "مخزون منخفض"
+
+msgid "Rupture de stock"
+msgstr "نفاد المخزون"
+
+msgid "Rupture"
+msgstr "نفاد"
+
+msgid "Valeur du stock (prix d'achat)"
+msgstr "قيمة المخزون (بسعر الشراء)"
+
+msgid "Produits à surveiller"
+msgstr "منتجات تحتاج إلى متابعة"
+
+msgid "Produit"
+msgstr "المنتج"
+
+msgid "Quantité"
+msgstr "الكمية"
+
+msgid "Seuil"
+msgstr "الحد الأدنى"
+
+msgid "Emplacement"
+msgstr "الموقع"
+
+msgid "Statut"
+msgstr "الحالة"
+
+msgid "Aucun produit à surveiller : tous les stocks sont au-dessus de leur seuil."
+msgstr "لا توجد منتجات تحتاج إلى متابعة: جميع المخزونات فوق حدّها الأدنى."
+
+msgid "Derniers mouvements de stock"
+msgstr "آخر حركات المخزون"
+
+msgid "Date"
+msgstr "التاريخ"
+
+msgid "Type"
+msgstr "النوع"
+
+msgid "Utilisateur"
+msgstr "المستخدم"
+
+msgid "Aucun mouvement de stock enregistré."
+msgstr "لا توجد حركات مخزون مسجّلة."
+
+msgid "Définitions"
+msgstr "التعريفات"
+
+msgid "Références actives : produits non archivés."
+msgstr "المراجع النشطة: المنتجات غير المؤرشفة."
+
+msgid "Quantité totale : somme des quantités des produits actifs."
+msgstr "الكمية الإجمالية: مجموع كميات المنتجات النشطة."
+
+msgid "Stock faible : quantité comprise entre 1 et le seuil d'alerte du produit."
+msgstr "مخزون منخفض: كمية بين 1 وحدّ التنبيه الخاص بالمنتج."
+
+msgid "Rupture : quantité égale à 0."
+msgstr "نفاد: الكمية تساوي 0."
+
+msgid "Valeur du stock : quantité × prix d'achat, produits actifs seulement."
+msgstr "قيمة المخزون: الكمية × سعر الشراء، للمنتجات النشطة فقط."
+
+msgid "Accès refusé"
+msgstr "الوصول مرفوض"
+
+msgid "Vous n'avez pas la permission d'accéder à cette page."
+msgstr "ليست لديك صلاحية الوصول إلى هذه الصفحة."
+
+msgid "Retour à l'accueil"
+msgstr "العودة إلى الصفحة الرئيسية"
+
+msgid "Propriétaire / administrateur"
+msgstr "المالك / المدير"
+
+msgid "Gestionnaire de stock"
+msgstr "مسؤول المخزون"
+
+msgid "Vendeur / caissier"
+msgstr "بائع / أمين الصندوق"
+
+msgid "Entrée"
+msgstr "إدخال"
+
+msgid "Sortie"
+msgstr "إخراج"
+
+msgid "Ajustement positif"
+msgstr "تعديل بالزيادة"
+
+msgid "Ajustement négatif"
+msgstr "تعديل بالنقصان"

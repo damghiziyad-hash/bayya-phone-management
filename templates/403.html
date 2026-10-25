@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Accès refusé" %}{% endblock %}
+{% block content %}
+<div class="alert alert-danger" role="alert">
+  <h1 class="h4">{% trans "Accès refusé" %}</h1>
+  <p class="mb-0">{% trans "Vous n'avez pas la permission d'accéder à cette page." %}</p>
+</div>
+<a class="btn btn-outline-secondary" href="{% url 'web:root' %}">{% trans "Retour à l'accueil" %}</a>
+{% endblock %}
