@@ -1,0 +1,18 @@
+# Environnement et secrets
+.env
+.venv/
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+# Django
+db.sqlite3
+staticfiles/
+media/
+# Sauvegardes locales
+*.bak
+*.sql
+*.dump
+# Éditeurs
+.vscode/
+.idea/
