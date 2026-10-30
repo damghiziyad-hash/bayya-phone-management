@@ -1,3 +1,4 @@
+
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
@@ -20,7 +21,6 @@ class ProductForm(forms.ModelForm):
             "sale_price",
             "low_stock_threshold",
             "location",
-            "status",
         ]
         widgets = {
             "sku": forms.TextInput(attrs={"class": "form-control"}),
@@ -30,12 +30,19 @@ class ProductForm(forms.ModelForm):
             "category": forms.Select(attrs={"class": "form-select"}),
             "phone_brand": forms.TextInput(attrs={"class": "form-control"}),
             "phone_model": forms.TextInput(attrs={"class": "form-control"}),
-            "purchase_price": forms.NumberInput(attrs={"class": "form-control", "step": "0.01", "min": "0"}),
-            "sale_price": forms.NumberInput(attrs={"class": "form-control", "step": "0.01", "min": "0"}),
-            "low_stock_threshold": forms.NumberInput(attrs={"class": "form-control", "min": "0"}),
+            "purchase_price": forms.NumberInput(
+                attrs={"class": "form-control", "step": "0.01", "min": "0"}
+            ),
+            "sale_price": forms.NumberInput(
+                attrs={"class": "form-control", "step": "0.01", "min": "0"}
+            ),
+            "low_stock_threshold": forms.NumberInput(
+                attrs={"class": "form-control", "min": "0"}
+            ),
             "location": forms.TextInput(attrs={"class": "form-control"}),
-            "status": forms.Select(attrs={"class": "form-select"}),
-            "image": forms.ClearableFileInput(attrs={"class": "form-control", "accept": "image/*"}),
+            "image": forms.ClearableFileInput(
+                attrs={"class": "form-control", "accept": "image/*"}
+            ),
         }
         labels = {
             "sku": _("Référence (SKU)"),
@@ -49,7 +56,6 @@ class ProductForm(forms.ModelForm):
             "sale_price": _("Prix de vente"),
             "low_stock_threshold": _("Seuil d'alerte"),
             "location": _("Emplacement"),
-            "status": _("Statut"),
             "image": _("Photo du produit"),
         }
 
@@ -58,8 +64,26 @@ class ProductForm(forms.ModelForm):
 
         self.fields["category"].queryset = Category.objects.all()
 
-        # Le prix d'achat ne doit pas être accessible sans permission.
+        # Le prix d'achat reste protégé par la permission existante.
         if user is None or not user.has_perm("catalog.view_purchase_price"):
             self.fields.pop("purchase_price", None)
 
-        # La quantité n'est volontairement pas dans ce formulaire.
+        # La quantité et le statut ne sont pas modifiables ici.
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+
+        if commit:
+            if instance._state.adding:
+                instance.save()
+            else:
+                # Ne sauvegarder que les champs réellement modifiés.
+                update_fields = set(self.changed_data)
+
+                if update_fields:
+                    update_fields.add("updated_at")
+                    instance.save(update_fields=update_fields)
+
+            self.save_m2m()
+
+        return instance

@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.views import View
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
@@ -112,11 +113,17 @@ class ProductDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView)
             )
             return redirect("catalog:product_list")
 
+
 class ProductArchiveView(LoginRequiredMixin, PermissionRequiredMixin, View):
     permission_required = "catalog.change_product"
 
+    @transaction.atomic
     def post(self, request, pk):
-        product = get_object_or_404(Product, pk=pk)
+        # نفس القفل المستعمل في inventory.services.record_movement
+        product = get_object_or_404(
+            Product.objects.select_for_update(),
+            pk=pk,
+        )
 
         if product.status == Status.ARCHIVED:
             messages.info(request, "Ce produit est déjà archivé.")
@@ -138,6 +145,7 @@ class ProductArchiveView(LoginRequiredMixin, PermissionRequiredMixin, View):
             f"Le produit « {product.display_name} » a été archivé."
         )
         return redirect("catalog:product_list")
+
 class ClientProductListView(ListView):
     """Catalogue public des produits actifs."""
 

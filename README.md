@@ -1,4 +1,4 @@
-# Bayya Phone — Stock & CRM Management System
+# Bayya Phone — Stock & CRM System
 
 Application de gestion interne (Django, PostgreSQL, Bootstrap 5). **Lot 1 : fondations** — utilisateurs/rôles, catégories, produits, mouvements de stock, journal d'audit. Ventes, factures PDF, CRM, tableau de bord et interface bilingue complète arrivent dans les lots suivants.
 
