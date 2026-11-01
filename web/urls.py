@@ -7,7 +7,7 @@ from . import views
 app_name = "web"
 
 urlpatterns = [
-    path("", RedirectView.as_view(pattern_name="web:dashboard", permanent=False), name="root"),
+    path("", RedirectView.as_view(pattern_name="catalog:client_catalog", permanent=False), name="root"),
     path("connexion/", views.LoginView.as_view(), name="login"),
     path("deconnexion/", auth_views.LogoutView.as_view(), name="logout"),  # POST uniquement
     path("tableau-de-bord/", views.DashboardView.as_view(), name="dashboard"),

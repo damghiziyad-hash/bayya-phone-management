@@ -68,11 +68,13 @@ class OrderItem(models.Model):
         verbose_name=_("Commande"),
     )
     product = models.ForeignKey(
-        "catalog.Product",
-        on_delete=models.PROTECT,
-        related_name="order_items",
-        verbose_name=_("Produit"),
-    )
+    "catalog.Product",
+    on_delete=models.SET_NULL,
+    related_name="order_items",
+    verbose_name="Produit",
+    null=True,
+    blank=True,
+)
     product_name = models.CharField(
         _("Nom du produit"),
         max_length=200,

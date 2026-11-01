@@ -24,7 +24,15 @@ class StockMovementQuerySet(models.QuerySet):
 class StockMovement(models.Model):
     """Mouvement en ajout seul. Une erreur se corrige par un mouvement compensatoire (`reverses`)."""
 
-    product = models.ForeignKey("catalog.Product", on_delete=models.PROTECT, related_name="movements")
+    product = models.ForeignKey(
+    "catalog.Product",
+    on_delete=models.CASCADE,
+    related_name="movements",
+    null=True,
+    blank=True,
+)
+    product_name = models.CharField(max_length=200, blank=True)
+    product_sku = models.CharField(max_length=64, blank=True)
     movement_type = models.CharField(max_length=20, choices=MovementType.choices)
     quantity = models.PositiveIntegerField(_("quantité"))
     quantity_before = models.PositiveIntegerField()
@@ -33,7 +41,13 @@ class StockMovement(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="stock_movements")
     reason = models.CharField(_("motif"), max_length=255, blank=True)
     reference = models.CharField(_("référence"), max_length=100, blank=True)
-    reverses = models.OneToOneField("self", null=True, blank=True, on_delete=models.PROTECT, related_name="reversed_by")
+    reverses = models.OneToOneField(
+    "self",
+    null=True,
+    blank=True,
+    on_delete=models.CASCADE,
+    related_name="reversed_by",
+)
 
     objects = StockMovementQuerySet.as_manager()
 

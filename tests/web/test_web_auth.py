@@ -38,8 +38,10 @@ def test_inactive_user_cannot_login(client, user):
 
 
 def test_login_ignores_external_next_url(client, user):
-    resp = client.post(reverse("web:login") + "?next=https://evil.example/",
-                       {"username": "vendeur1", "password": PWD})
+    resp = client.post(
+        reverse("web:login") + "?next=https://evil.example/",
+        {"username": "vendeur1", "password": PWD},
+    )
     assert resp.status_code == 302 and resp.url == reverse("web:dashboard")
 
 
@@ -58,7 +60,7 @@ def test_logout_requires_post(client, user):
 def test_logout_post_ends_session(client, user):
     client.force_login(user)
     resp = client.post(reverse("web:logout"))
-    assert resp.status_code == 302 and resp.url == reverse("web:login")
+    assert resp.status_code == 302 and resp.url == reverse("web:root")
     assert "_auth_user_id" not in client.session
 
 
@@ -75,6 +77,6 @@ def test_authenticated_user_skips_login_page(client, user):
     assert resp.status_code == 302 and resp.url == reverse("web:dashboard")
 
 
-def test_root_redirects_to_dashboard(client):
+def test_root_redirects_to_client_catalog(client):
     resp = client.get("/")
-    assert resp.status_code == 302 and resp.url == reverse("web:dashboard")
+    assert resp.status_code == 302 and resp.url == reverse("catalog:client_catalog")

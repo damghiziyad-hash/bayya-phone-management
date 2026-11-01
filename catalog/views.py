@@ -14,6 +14,7 @@ from django.views.generic import DetailView
 from core.models import Status
 from .forms import ProductForm
 from .models import Category, Product
+from core.audit import log_action
 
 
 class ProductListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
@@ -86,32 +87,33 @@ class ProductUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView)
         kwargs["user"] = self.request.user
         return kwargs
 
-class ProductDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
-    model = Product
-    template_name = "catalog/product_confirm_delete.html"
+class ProductDeleteView(LoginRequiredMixin, PermissionRequiredMixin, View):
     permission_required = "catalog.delete_product"
-    success_url = reverse_lazy("catalog:product_list")
 
-    def form_valid(self, form):
-        product = self.object
+    @transaction.atomic
+    def post(self, request, pk):
+        product = get_object_or_404(
+            Product.objects.select_for_update(),
+            pk=pk,
+        )
 
-        # Refuser la suppression si le produit a un historique
-        if product.movements.exists() or product.order_items.exists():
-            messages.error(
-                self.request,
-                "Ce produit possède un historique de stock ou des commandes. "
-                "Archivez-le au lieu de le supprimer."
-            )
-            return redirect("catalog:product_list")
+        product_name = product.display_name
+        product_sku = product.sku
 
-        try:
-            return super().form_valid(form)
-        except ProtectedError:
-            messages.error(
-                self.request,
-                "Suppression impossible : ce produit est utilisé par d'autres données."
-            )
-            return redirect("catalog:product_list")
+        # Enregistrer la suppression dans le journal d'audit.
+        log_action(
+            request.user,
+            "product.deleted",
+            product,
+            product_name=product_name,
+            product_sku=product_sku,
+        )
+
+        # Supprimer le produit.
+        # Les mouvements et les lignes de commande restent conservés.
+        product.delete()
+
+        return redirect("catalog:product_list")
 
 
 class ProductArchiveView(LoginRequiredMixin, PermissionRequiredMixin, View):
@@ -152,6 +154,13 @@ class ClientProductListView(ListView):
     template_name = "catalog/client_product_list.html"
     context_object_name = "products"
     paginate_by = 12
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["categories"] = Category.objects.filter(
+            status=Status.ACTIVE
+        )
+        return context
 
     def get_queryset(self):
         queryset = Product.objects.select_related("category").filter(

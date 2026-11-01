@@ -70,14 +70,27 @@ class ProductForm(forms.ModelForm):
 
         # La quantité et le statut ne sont pas modifiables ici.
 
-    def save(self, commit=True):
-        instance = super().save(commit=False)
+    def clean_sku(self):
+        sku = (self.cleaned_data.get("sku") or "").strip().upper()
 
-        if commit:
+        existing_products = Product.objects.filter(sku=sku)
+
+        if self.instance.pk:
+            existing_products = existing_products.exclude(pk=self.instance.pk)
+
+        if existing_products.exists():
+            raise forms.ValidationError(
+                _("Cette référence SKU existe déjà. Veuillez choisir une autre référence.")
+            )
+
+        return sku
+def save(self, commit=True):
+    instance = super().save(commit=False)
+
+    if commit:
             if instance._state.adding:
                 instance.save()
             else:
-                # Ne sauvegarder que les champs réellement modifiés.
                 update_fields = set(self.changed_data)
 
                 if update_fields:
@@ -86,4 +99,4 @@ class ProductForm(forms.ModelForm):
 
             self.save_m2m()
 
-        return instance
+    return instance

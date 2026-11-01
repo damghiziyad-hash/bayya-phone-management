@@ -103,7 +103,7 @@ else:
 AUTH_USER_MODEL = "accounts.User"
 LOGIN_URL = "web:login"
 LOGIN_REDIRECT_URL = "web:dashboard"
-LOGOUT_REDIRECT_URL = "web:login"
+LOGOUT_REDIRECT_URL = "web:root"
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},

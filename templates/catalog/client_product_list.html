@@ -6,184 +6,587 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bayya Phone | Boutique</title>
+    <title>Bayya Phone | Pièces de rechange</title>
+
     <link rel="stylesheet" href="{% static 'vendor/bootstrap/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/app.css' %}">
 
     <style>
-        body { background: #f7f8fa; color: #202124; }
-        .store-nav { background: #fff; border-bottom: 1px solid #eee; }
-        .brand { font-size: 1.5rem; font-weight: 800; color: #172554; }
+        :root {
+            --primary: #2196f3;
+            --primary-dark: #0875cf;
+            --dark: #172b4d;
+            --muted: #718096;
+            --background: #f5f8fc;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--background);
+            color: var(--dark);
+            font-family: Arial, sans-serif;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .store-nav {
+            background: #fff;
+            border-bottom: 1px solid #e9eef5;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            color: var(--dark);
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: -.5px;
+        }
+
+        .brand span {
+            color: var(--primary);
+        }
+
+        .nav-link-store {
+            color: #526176;
+            font-weight: 600;
+            transition: .2s;
+        }
+
+        .nav-link-store:hover {
+            color: var(--primary);
+        }
+
         .hero {
-            background: linear-gradient(120deg, #101d40, #2454a4);
-            color: white; border-radius: 22px; padding: 55px 35px;
+            position: relative;
+            overflow: hidden;
+            padding: 65px 45px;
+            border-radius: 24px;
+            color: #fff;
+            background: linear-gradient(120deg, #102b50, #147ed1);
         }
-        .hero h1 { font-weight: 800; }
+
+        .hero::after {
+            content: "✦";
+            position: absolute;
+            right: 7%;
+            top: 5%;
+            font-size: 210px;
+            color: rgba(255,255,255,.08);
+            transform: rotate(15deg);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 650px;
+        }
+
+        .hero-label {
+            display: inline-block;
+            padding: 7px 13px;
+            border-radius: 30px;
+            background: rgba(255,255,255,.14);
+            font-size: .82rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            line-height: 1.15;
+            font-weight: 900;
+            margin-bottom: 18px;
+        }
+
+        .hero p {
+            color: #e1efff;
+            font-size: 1.05rem;
+            line-height: 1.8;
+            max-width: 570px;
+        }
+
+        .btn-hero {
+            display: inline-block;
+            background: #fff;
+            color: var(--primary-dark);
+            padding: 13px 23px;
+            border-radius: 10px;
+            font-weight: 800;
+            transition: .2s;
+        }
+
+        .btn-hero:hover {
+            background: #eaf4ff;
+            color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .section-title {
+            font-weight: 900;
+            color: var(--dark);
+        }
+
+        .section-subtitle {
+            color: var(--muted);
+            font-size: .95rem;
+        }
+
+        .category-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .category-chip {
+            display: inline-block;
+            background: #fff;
+            color: #42536b;
+            border: 1px solid #e3eaf2;
+            border-radius: 30px;
+            padding: 10px 17px;
+            font-size: .9rem;
+            font-weight: 700;
+            transition: .2s;
+        }
+
+        .category-chip:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .search-box {
+            background: #fff;
+            border: 1px solid #e2eaf3;
+            border-radius: 12px;
+            padding: 6px;
+            display: flex;
+            gap: 8px;
+            width: min(100%, 440px);
+        }
+
+        .search-box input {
+            border: 0;
+            box-shadow: none !important;
+            padding: 10px 12px;
+            min-width: 0;
+        }
+
+        .btn-search {
+            background: var(--primary);
+            color: #fff;
+            border: 0;
+            border-radius: 9px;
+            padding: 10px 17px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .btn-search:hover {
+            background: var(--primary-dark);
+            color: #fff;
+        }
+
         .product-card {
-            background: white; border: 1px solid #eee; border-radius: 16px;
-            height: 100%; overflow: hidden; transition: .2s;
+            background: #fff;
+            height: 100%;
+            border: 1px solid #e9eef5;
+            border-radius: 17px;
+            overflow: hidden;
+            transition: .25s;
         }
+
         .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px #17255412;
+            transform: translateY(-5px);
+            box-shadow: 0 14px 35px rgba(23,43,77,.09);
         }
+
+        .product-image-area {
+            height: 210px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            border-bottom: 1px solid #f0f3f7;
+        }
+
         .product-image {
-            height: 220px; width: 100%; object-fit: contain;
-            background: #fff; padding: 18px;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 17px;
+            transition: transform .3s;
         }
+
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+
         .product-placeholder {
-            height: 220px; display: grid; place-items: center;
-            background: #eef2f7; color: #64748b; font-size: 3rem;
+            color: #a7b8ca;
+            font-size: 4rem;
+            font-weight: 300;
         }
-        .product-price { color: #1d4ed8; font-weight: 800; font-size: 1.2rem; }
-        .btn-store { background: #1d4ed8; color: white; border-radius: 9px; }
-        .btn-store:hover { background: #173ea8; color: white; }
+
+        .product-category {
+            display: inline-block;
+            color: var(--primary-dark);
+            background: #eaf5ff;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: .75rem;
+            font-weight: 700;
+            margin-bottom: 11px;
+        }
+
+        .product-name {
+            color: var(--dark);
+            font-weight: 800;
+            font-size: 1rem;
+            line-height: 1.5;
+            min-height: 48px;
+        }
+
+        .product-compatibility {
+            color: var(--muted);
+            font-size: .84rem;
+            min-height: 38px;
+        }
+
+        .product-price {
+            color: var(--primary-dark);
+            font-size: 1.25rem;
+            font-weight: 900;
+        }
+
+        .stock-status {
+            font-size: .82rem;
+            font-weight: 700;
+        }
+
+        .stock-available {
+            color: #15945a;
+        }
+
+        .stock-unavailable {
+            color: #dc3545;
+        }
+
+        .btn-product {
+            display: block;
+            text-align: center;
+            background: var(--primary);
+            color: #fff;
+            padding: 11px;
+            border-radius: 9px;
+            font-weight: 700;
+            transition: .2s;
+        }
+
+        .btn-product:hover {
+            background: var(--primary-dark);
+            color: #fff;
+        }
+
+        .empty-state {
+            background: #fff;
+            border: 1px dashed #d6e0eb;
+            border-radius: 18px;
+            padding: 55px 20px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            color: #a8bad0;
+        }
+
+        .pagination .page-link {
+            color: var(--primary-dark);
+            border: 0;
+            margin: 0 4px;
+            border-radius: 8px;
+        }
+
+        .pagination .active .page-link {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .store-footer {
+            background: #102b50;
+            color: #dce9f7;
+            margin-top: 75px;
+            padding: 30px 0;
+        }
+
+        @media (max-width: 576px) {
+            .hero {
+                padding: 42px 24px;
+                border-radius: 17px;
+            }
+
+            .hero::after {
+                font-size: 130px;
+                right: 0;
+            }
+
+            .product-image-area {
+                height: 185px;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+        }
     </style>
 </head>
+
 <body>
 
 <nav class="store-nav py-3">
     <div class="container d-flex align-items-center justify-content-between gap-3">
-        <a class="brand text-decoration-none" href="/">Bayya Phone</a>
+        <a class="brand" href="{% url 'catalog:client_catalog' %}">
+            Bayya<span>Phone.</span>
+        </a>
 
-        <div class="d-flex align-items-center gap-3">
-            <a href="{% url 'catalog:client_catalog' %}" class="text-decoration-none text-dark">
-                Boutique
-            </a>
-            <a href="{% url 'web:login' %}" class="btn btn-outline-dark btn-sm">
-                <span aria-hidden="true">♙</span> Connexion
-            </a>
-        </div>
+        <a href="#produits" class="nav-link-store">
+            Notre boutique
+        </a>
     </div>
 </nav>
 
 <main class="container py-4 py-lg-5">
+
+    <!-- Hero -->
     <section class="hero mb-5">
-        <div class="row align-items-center">
-            <div class="col-lg-8">
-                <p class="text-uppercase small fw-bold mb-2">Bienvenue chez Bayya Phone</p>
-                <h1 class="display-5 mb-3">Le smartphone qu'il vous faut.</h1>
-                <p class="lead mb-4">
-                    Découvrez notre sélection de téléphones et trouvez votre prochain smartphone.
-                </p>
-                <a href="#produits" class="btn btn-light btn-lg">Découvrir nos produits</a>
-            </div>
+        <div class="hero-content">
+            <span class="hero-label">PIÈCES DE RECHANGE POUR TÉLÉPHONES</span>
+
+            <h1>
+                Les bonnes pièces pour réparer vos téléphones.
+            </h1>
+
+            <p>
+                Découvrez notre sélection de pièces détachées :
+                écrans, batteries, connecteurs de charge, caméras
+                et bien plus encore.
+            </p>
+
+            <a href="#produits" class="btn-hero">
+                Découvrir les pièces
+                <span aria-hidden="true"> →</span>
+            </a>
         </div>
     </section>
 
+    <!-- Categories -->
+    <section class="mb-5">
+        <div class="mb-3">
+            <h2 class="section-title h4 mb-1">Nos catégories</h2>
+            <p class="section-subtitle mb-0">
+                Trouvez rapidement le type de pièce recherché.
+            </p>
+        </div>
+
+        <div class="category-list">
+            {% for category in categories %}
+                <a class="category-chip"
+                   href="?q={{ category.name_fr|urlencode }}#produits">
+                    {{ category.display_name }}
+                </a>
+            {% empty %}
+                <span class="text-secondary small">
+                    Les catégories seront bientôt disponibles.
+                </span>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Products -->
     <section id="produits">
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+
+        <div class="d-flex flex-column flex-lg-row
+                    align-items-lg-center justify-content-between gap-3 mb-4">
+
             <div>
-                <h2 class="h3 fw-bold mb-1">Nos produits</h2>
-                <p class="text-secondary mb-0">Découvrez les modèles disponibles.</p>
+                <h2 class="section-title h3 mb-1">Nos pièces disponibles</h2>
+                <p class="section-subtitle mb-0">
+                    Des pièces détachées adaptées à différents modèles de téléphones.
+                </p>
             </div>
 
-            <form method="get" class="d-flex gap-2" role="search">
+            <form method="get" class="search-box" role="search">
                 <input
                     type="search"
                     name="q"
                     value="{{ request.GET.q }}"
                     class="form-control"
-                    placeholder="Rechercher un téléphone..."
-                    aria-label="Rechercher un téléphone"
+                    placeholder="Nom, pièce, marque, modèle..."
+                    aria-label="Rechercher une pièce"
                 >
-                <button class="btn btn-store px-3" type="submit">Rechercher</button>
+
+                <button class="btn-search" type="submit">
+                    Rechercher
+                </button>
             </form>
         </div>
 
         <div class="row g-4">
+
             {% for product in products %}
                 <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+
                     <article class="product-card">
-                        <a href="{% url 'catalog:client_product_detail' product.pk %}"
-                           class="text-decoration-none">
-                            {% if product.image %}
-                                <img src="{{ product.image.url }}"
-                                     class="product-image"
-                                     alt="{{ product.display_name }}">
-                            {% else %}
-                                <div class="product-placeholder" aria-label="Aucune photo">▧</div>
-                            {% endif %}
+
+                        <a href="{% url 'catalog:client_product_detail' product.pk %}">
+                            <div class="product-image-area">
+                                {% if product.image %}
+                                    <img
+                                        src="{{ product.image.url }}"
+                                        class="product-image"
+                                        alt="{{ product.display_name }}"
+                                        loading="lazy"
+                                    >
+                                {% else %}
+                                    <div class="product-placeholder" aria-label="Aucune photo">
+                                        ✦
+                                    </div>
+                                {% endif %}
+                            </div>
                         </a>
 
                         <div class="p-3">
-                            {% if product.phone_brand %}
-                                <p class="small text-secondary mb-1">{{ product.phone_brand }}</p>
-                            {% endif %}
 
-                            <h3 class="h6 fw-bold mb-2">
-                                <a href="{% url 'catalog:client_product_detail' product.pk %}"
-                                   class="text-decoration-none text-dark">
+                            <span class="product-category">
+                                {{ product.category.display_name }}
+                            </span>
+
+                            <a href="{% url 'catalog:client_product_detail' product.pk %}">
+                                <h3 class="product-name mb-2">
                                     {{ product.display_name }}
-                                </a>
-                            </h3>
+                                </h3>
+                            </a>
 
-                            {% if product.phone_model %}
-                                <p class="small text-secondary mb-2">{{ product.phone_model }}</p>
-                            {% endif %}
-
-                            <p class="product-price mb-3">
-                                {{ product.sale_price|floatformat:2 }} MAD
+                            <p class="product-compatibility mb-3">
+                                {% if product.phone_brand or product.phone_model %}
+                                    Compatible avec :
+                                    {{ product.phone_brand }}
+                                    {{ product.phone_model }}
+                                {% else %}
+                                    Pièce de rechange pour téléphone
+                                {% endif %}
                             </p>
 
-                            {% if product.quantity > 0 %}
-                                <p class="small text-success">Disponible</p>
-                            {% else %}
-                                <p class="small text-danger">Indisponible</p>
-                            {% endif %}
+                            <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+                                <span class="product-price">
+                                    {{ product.sale_price|floatformat:2 }} MAD
+                                </span>
 
-                            <a href="{% url 'catalog:client_product_detail' product.pk %}"
-                               class="btn btn-store w-100">
-                                Voir le produit
+                                {% if product.quantity > 0 %}
+                                    <span class="stock-status stock-available">
+                                        ● Disponible
+                                    </span>
+                                {% else %}
+                                    <span class="stock-status stock-unavailable">
+                                        ● Indisponible
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            <a
+                                href="{% url 'catalog:client_product_detail' product.pk %}"
+                                class="btn-product"
+                            >
+                                Voir les détails
                             </a>
+
                         </div>
                     </article>
+
                 </div>
+
             {% empty %}
                 <div class="col-12">
-                    <div class="bg-white rounded-4 p-5 text-center">
-                        <h3 class="h5">Aucun produit disponible pour le moment</h3>
-                        <p class="text-secondary mb-0">
-                            Revenez bientôt pour découvrir nos produits.
+                    <div class="empty-state">
+                        <div class="empty-icon">⌕</div>
+
+                        <h3 class="h5 fw-bold mt-3">
+                            Aucun produit trouvé
+                        </h3>
+
+                        <p class="text-secondary mb-3">
+                            Essayez avec un autre nom de pièce, une marque ou un modèle.
                         </p>
+
+                        <a href="{% url 'catalog:client_catalog' %}"
+                           class="btn btn-outline-primary">
+                            Voir tous les produits
+                        </a>
                     </div>
                 </div>
             {% endfor %}
+
         </div>
 
+        <!-- Pagination -->
         {% if is_paginated %}
             <nav class="mt-5" aria-label="Pagination des produits">
                 <ul class="pagination justify-content-center">
+
                     {% if page_obj.has_previous %}
                         <li class="page-item">
                             <a class="page-link"
-                               href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q|urlencode }}">
+                               href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q|urlencode }}#produits">
                                 Précédent
                             </a>
                         </li>
                     {% endif %}
 
                     <li class="page-item active">
-                        <span class="page-link">{{ page_obj.number }}</span>
+                        <span class="page-link">
+                            {{ page_obj.number }}
+                        </span>
                     </li>
 
                     {% if page_obj.has_next %}
                         <li class="page-item">
                             <a class="page-link"
-                               href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q|urlencode }}">
+                               href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q|urlencode }}#produits">
                                 Suivant
                             </a>
                         </li>
                     {% endif %}
+
                 </ul>
             </nav>
         {% endif %}
+
     </section>
 </main>
 
-<footer class="bg-white border-top py-4 mt-5">
-    <div class="container text-center text-secondary small">
-        © {% now "Y" %} Bayya Phone — Tous droits réservés.
+<footer class="store-footer">
+    <div class="container text-center">
+        <div class="brand text-white mb-2">
+            Bayya<span>Phone.</span>
+        </div>
+
+        <p class="small mb-0">
+            Votre boutique de pièces détachées pour téléphones.
+        </p>
+
+        <p class="small mt-3 mb-0">
+            © {% now "Y" %} Bayya Phone — Tous droits réservés.
+        </p>
     </div>
 </footer>
 
